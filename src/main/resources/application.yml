@@ -1,0 +1,61 @@
+server:
+  port: 8084
+
+#feign:
+#  client:
+#    config:
+#      default:
+#        connectTimeout: 10000
+#        readTimeout: 10000
+#        loggerLevel: basic
+#        decode404: true
+#        retryer: feign.Retryer.Default
+
+spring:
+  profiles:
+    active: native
+  application:
+    name: my-sample-client
+  cloud:
+    consul:
+      ribbon:
+        enabled: true
+      discovery:
+        instanceId: ${spring.application.name}:${random.value} 
+        queryPassing: true
+        #enabled: false
+        #register: false
+    config:
+      failFast: true
+      discovery:
+         enabled: true
+         serviceId: config-server
+      server: 
+        native: 
+          searchLocations: file:///C:/java_dev/config-repo
+    #loadbalancer: 
+    #  retry: true 
+        #enabled: true
+    
+ribbon:
+  NFLoadBalancerRuleClassName: com.netflix.loadbalancer.AvailabilityFilteringRule
+  NFLoadBalancerPingClassName: com.netflix.loadbalancer.PingUrl
+  ServerListRefreshInterval: 10000
+  MaxAutoRetries: 3
+  MaxAutoRetriesNextServer: 3
+  OkToRetryOnAllOperations: true
+    
+#the name of another microservice we are going to call
+my-sample-app:
+  ribbon:
+    consul:
+      enabled: true
+    #listOfServers: localhost:8084,localhost:8085,localhost:8086
+    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.AvailabilityFilteringRule
+    NFLoadBalancerPingClassName: com.netflix.loadbalancer.PingUrl
+    retryableStatusCodes: 500, 503
+    ServerListRefreshInterval: 2000
+    MaxAutoRetries: 3
+    MaxAutoRetriesNextServer: 2
+    OkToRetryOnAllOperations: true
+    #see https://github.com/Netflix/ribbon/wiki/Getting-Started#the-properties-file-sample-clientproperties

@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: my-sample-client
+  cloud:
+    consul:
+      enabled: true
+      host: localhost
+      port: 8500
+      config:
+        enabled: true
+      discovery:
+        registerHealthCheck: true
+        register-health-check: true
+        instanceId: ${spring.application.name}:${random.value}  
+    config:
+      failFast: false
+      #when false = if consul isn't available, don't worry about using consul as config.
+    loadbalancer: 
+      retry: true
+        #enabled: true
